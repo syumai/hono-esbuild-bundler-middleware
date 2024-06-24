@@ -19,11 +19,6 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
-    "./wasm": {
-      "types": "./dist/bundlers/wasm.d.ts",
-      "import": "./dist/bundlers/wasm.js",
-      "require": "./dist/bundlers/wasm.cjs"
-    },
     "./node": {
       "types": "./dist/bundlers/node.d.ts",
       "import": "./dist/bundlers/node.js",
@@ -60,6 +55,7 @@
     "@types/node": "^20.14.8",
     "esbuild": "^0.21.5",
     "hono": "^3.11.7",
+    "publint": "^0.2.8",
     "tsup": "^8.0.1",
     "typescript": "^5.5.2",
     "vitest": "^0.34.6"
