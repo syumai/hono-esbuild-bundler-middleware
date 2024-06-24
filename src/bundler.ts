@@ -1,5 +1,6 @@
 import { createMiddleware } from "hono/factory";
 import type { build, initialize } from "./types.esbuild";
+import { resolve } from "node:path";
 
 export type EsbuildLike = {
   build: typeof build;
@@ -14,6 +15,7 @@ export type EsbuildBundlerOptions = {
   esbuild?: EsbuildLike;
   contentType?: string;
   buildOptions?: BuildOptions;
+  root?: string;
 };
 
 export const esbuildBundler = (options?: EsbuildBundlerOptions) => {
@@ -31,11 +33,13 @@ export const esbuildBundler = (options?: EsbuildBundlerOptions) => {
 
       const script = await c.res.text();
       const buildOptions: BuildOptions = options?.buildOptions ?? {};
+      const root = options?.root ?? process.cwd();
 
+      const entryPoint = resolve(root, c.req.path.replace(/^\//, ""));
       try {
         const { errors, outputFiles } = await esbuild.build({
           ...buildOptions,
-          // entryPoints: [],
+          entryPoints: [entryPoint],
           bundle: true,
           write: false,
         });

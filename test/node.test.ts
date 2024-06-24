@@ -1,10 +1,11 @@
 import { Hono } from "hono";
 import { describe, it, expect } from "vitest";
 import { esbuildBundler } from "../src/bundlers/node";
+import { serveStatic } from "@hono/node-server/serve-static";
+import { resolve } from "path";
 
 const TS = "function add(a: number, b: number) { return a + b; }";
 const BAD = "function { !!! !@#$ add(a: INT) return a + b + c; }";
-const TSX = "<h1>Hello</h1>";
 
 // No Whitespace
 // Returns a code representation where every space chain has been collapsed
@@ -16,24 +17,14 @@ function nw(code: string) {
 describe("esbuild Bundler middleware", () => {
   const app = new Hono();
 
-  app.use("/static/*", esbuildBundler());
-  app.get("/static/file.ts", (c) =>
-    c.text(TS, 200, {
-      // Set a dummy content-type since Serve Static Middleware may set a unexpected content-type.
-      "content-type": "x-content-type",
+  app.use(
+    "/static/*",
+    esbuildBundler({
+      root: resolve(process.cwd(), "testdata"),
     })
   );
-  app.get("/static/file.js", (c) => c.text(TS));
-  app.get("/static/bad.ts", (c) => c.text(BAD));
-  app.get("/static/file.tsx", (c) => c.text(TSX));
 
-  app.get(
-    "/static-custom-content-type.ts",
-    esbuildBundler({
-      contentType: "x-text/javascript",
-    }),
-    (c) => c.text(TS)
-  );
+  app.use("/static/*", serveStatic({ root: "testdata" }));
 
   it("Should bundle typescript", async () => {
     // Request a Typescript page
@@ -41,17 +32,7 @@ describe("esbuild Bundler middleware", () => {
     expect(res).not.toBeNull();
     expect(res.status).toBe(200);
     expect(res.headers.get("content-type")).toBe("text/javascript");
-    expect(nw(await res.text())).toBe("function add(a, b) { return a + b; }");
-  });
-
-  it("Should bundle typescript with a custom content-type", async () => {
-    // Request a Typescript page
-    const res = await app.request(
-      "http://localhost/static-custom-content-type.ts"
-    );
-    expect(res).not.toBeNull();
-    expect(res.status).toBe(200);
-    expect(res.headers.get("content-type")).toBe("x-text/javascript");
+    expect(nw(await res.text())).toBe(`"use strict"; (() => { })();`);
   });
 
   it("Should not touch non TS content paths", async () => {
@@ -75,7 +56,7 @@ describe("esbuild Bundler middleware", () => {
     expect(res).not.toBeNull();
     expect(res.status).toBe(200);
     expect(nw(await res.text())).toBe(
-      '/* @__PURE__ */ React.createElement("h1", null, "Hello");'
+      `"use strict"; (() => { // testdata/static/file.tsx var file_default = /* @__PURE__ */ React.createElement("h1", null, "Hello"); })();`
     );
   });
 });
