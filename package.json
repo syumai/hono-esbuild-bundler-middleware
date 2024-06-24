@@ -59,7 +59,6 @@
     "@types/jest": "^29.5.12",
     "@types/node": "^20.14.8",
     "esbuild": "^0.21.5",
-    "esbuild-wasm": "^0.21.5",
     "hono": "^3.11.7",
     "tsup": "^8.0.1",
     "vitest": "^0.34.6"

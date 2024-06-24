@@ -4,66 +4,9 @@ The **esbuild Bundler Middleware** is a Hono Middleware designed to bundle conte
 You can place your script written in TypeScript in a directory and serve it using `serveStatic`.
 When you apply this Middleware, the script will be bundled into JavaScript code.
 
-This Middleware uses esbuild. It works on _Cloudflare Workers, Deno, Deno Deploy, or Node.js_.
+This Middleware uses esbuild. It works only on Node.js.
 
 ## Usage
-
-Usage differs depending on the platform.
-
-### Cloudflare Workers / Pages
-
-#### Installation
-
-```text
-npm i hono @syumai/hono-esbuild-bundler esbuild-wasm
-```
-
-#### Example
-
-```ts
-import { Hono } from 'hono'
-import { serveStatic } from 'hono/cloudflare-workers'
-import { esbuildBundler } from '@syumai/hono-esbuild-bundler/wasm'
-// Specify the path of the esbuild wasm file.
-import wasm from '../node_modules/esbuild-wasm/esbuild.wasm'
-
-const app = new Hono()
-
-app.get('/static/:scriptName{.+.tsx?}', esbuildBundler({ wasmModule: wasm }))
-app.get('/static/*', serveStatic({ root: './' }))
-
-export default app
-```
-
-`global.d.ts`:
-
-```ts
-declare module '*.wasm'
-```
-
-### Deno / Deno Deploy
-
-#### Example
-
-```ts
-import { Hono } from 'npm:hono'
-
-import { serveStatic } from 'npm:hono/deno'
-import { esbuildBundler } from 'npm:@syumai/hono-esbuild-bundler'
-import * as esbuild from 'https://deno.land/x/esbuild@v0.19.5/wasm.js'
-
-const app = new Hono()
-
-await esbuild.initialize({
-  wasmURL: 'https://deno.land/x/esbuild@v0.19.5/esbuild.wasm',
-  worker: false,
-})
-
-app.get('/static/*', esbuildBundler({ esbuild }))
-app.get('/static/*', serveStatic())
-
-Deno.serve(app.fetch)
-```
 
 ### Node.js
 
