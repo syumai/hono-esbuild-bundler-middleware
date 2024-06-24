@@ -47,9 +47,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/honojs/middleware.git"
+    "url": "https://github.com/syumai/hono-esbuild-bundler-middleware.git"
   },
-  "homepage": "https://github.com/honojs/middleware",
+  "homepage": "https://github.com/syumai/hono-esbuild-bundler-middleware",
   "peerDependencies": {
     "hono": ">=3.9.2"
   },
