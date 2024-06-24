@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "test": "vitest run",
-    "build": "tsup ./src/*.ts ./src/transpilers/*.ts --format esm,cjs --dts --no-splitting --external esbuild-wasm,esbuild",
+    "build": "tsup ./src/*.ts ./src/bundlers/*.ts --format esm,cjs --dts --no-splitting --external esbuild-wasm,esbuild",
     "publint": "publint",
     "release": "yarn build && yarn test && yarn publint && yarn publish"
   },
@@ -20,23 +20,23 @@
       "require": "./dist/index.cjs"
     },
     "./wasm": {
-      "types": "./dist/transpilers/wasm.d.ts",
-      "import": "./dist/transpilers/wasm.js",
-      "require": "./dist/transpilers/wasm.cjs"
+      "types": "./dist/bundlers/wasm.d.ts",
+      "import": "./dist/bundlers/wasm.js",
+      "require": "./dist/bundlers/wasm.cjs"
     },
     "./node": {
-      "types": "./dist/transpilers/node.d.ts",
-      "import": "./dist/transpilers/node.js",
-      "require": "./dist/transpilers/node.cjs"
+      "types": "./dist/bundlers/node.d.ts",
+      "import": "./dist/bundlers/node.js",
+      "require": "./dist/bundlers/node.cjs"
     }
   },
   "typesVersions": {
     "*": {
       "wasm": [
-        "./dist/transpilers/wasm"
+        "./dist/bundlers/wasm"
       ],
       "node": [
-        "./dist/transpilers/node"
+        "./dist/bundlers/node"
       ]
     }
   },
