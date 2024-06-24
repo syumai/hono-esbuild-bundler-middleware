@@ -6,6 +6,8 @@ When you apply this Middleware, the script will be bundled into JavaScript code.
 
 This Middleware uses esbuild. It works only on Node.js.
 
+This Middleware is based on [@hono/esbuild-transpiler](https://github.com/honojs/middleware/tree/main/packages/esbuild-transpiler).
+
 ## Usage
 
 ### Node.js
