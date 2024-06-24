@@ -1,19 +1,19 @@
 import { createMiddleware } from "hono/factory";
-import type { transform, initialize } from "./types.esbuild";
+import type { build, initialize } from "./types.esbuild";
 
 export type EsbuildLike = {
-  transform: typeof transform;
+  build: typeof build;
   initialize: typeof initialize;
 };
 
-export type TransformOptions = Partial<Parameters<typeof transform>[1]>;
+export type BuildOptions = Partial<Parameters<typeof build>[0]>;
 
 export type EsbuildBundlerOptions = {
   extensions?: string[];
   cache?: boolean;
   esbuild?: EsbuildLike;
   contentType?: string;
-  transformOptions?: TransformOptions;
+  buildOptions?: BuildOptions;
 };
 
 export const esbuildBundler = (options?: EsbuildBundlerOptions) => {
@@ -30,14 +30,22 @@ export const esbuildBundler = (options?: EsbuildBundlerOptions) => {
       }
 
       const script = await c.res.text();
-      const transformOptions: TransformOptions =
-        options?.transformOptions ?? {};
+      const buildOptions: BuildOptions = options?.buildOptions ?? {};
 
       try {
-        const { code } = await esbuild.transform(script, {
-          loader: "tsx",
-          ...transformOptions,
+        const { errors, outputFiles } = await esbuild.build({
+          ...buildOptions,
+          // entryPoints: [],
+          bundle: true,
+          write: false,
         });
+        if (errors.length > 0) {
+          throw new Error(errors.map((error) => error.text).join("\n"));
+        }
+        if (!outputFiles?.[0]) {
+          throw new Error("outputFiles must exist");
+        }
+        const code = outputFiles[0].text;
         c.res = c.body(code);
         c.res.headers.set(
           "content-type",
