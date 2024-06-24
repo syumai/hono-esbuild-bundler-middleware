@@ -61,6 +61,7 @@
     "esbuild": "^0.21.5",
     "hono": "^3.11.7",
     "tsup": "^8.0.1",
+    "typescript": "^5.5.2",
     "vitest": "^0.34.6"
   },
   "engines": {
