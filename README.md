@@ -1,7 +1,7 @@
 # esbuild Bundler Middleware
 
 The **esbuild Bundler Middleware** is a Hono Middleware designed to bundle content such as TypeScript or TSX.
-You can place your script written in TypeScript in a directory and serve it using `serveStatic`.
+You can place your script written in TypeScript in a directory.
 When you apply this Middleware, the script will be bundled into JavaScript code.
 
 This Middleware uses esbuild. It works only on Node.js.
@@ -21,13 +21,11 @@ npm i hono @hono/node-server @syumai/hono-esbuild-bundler esbuild
 ```ts
 import { Hono } from 'hono'
 import { serve } from '@hono/node-server'
-import { serveStatic } from '@hono/node-server/serve-static'
 import { esbuildBundler } from '@syumai/hono-esbuild-bundler/node'
 
 const app = new Hono()
 
 app.get('/static/:scriptName{.+.tsx?}', esbuildBundler())
-app.get('/static/*', serveStatic({ root: './' }))
 
 serve(app)
 ```
